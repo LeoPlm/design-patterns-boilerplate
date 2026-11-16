@@ -4,49 +4,53 @@
 
 ## Objectif
 
-Concevoir une petite application autour de **trois agrégats métier** et de leurs transactions (les points d'entrée du domaine).
+Concevoir une petite application autour de **trois use cases** : trois fonctions qui constituent des points d'entrée du métier.
 
-Le but n'est pas seulement d'écrire du code qui fonctionne : il faut **rendre les intentions métier suffisamment explicites pour qu'un modèle d'IA peu puissant puisse implémenter une transaction sans interprétation ni question supplémentaire**.
+L'objectif n'est pas de produire le maximum de code, mais de **décrire précisément le comportement attendu**. Le professeur sélectionnera le code d'un use case et demandera à un modèle d'IA peu puissant de l'implémenter.
 
-## Déroulement
+**Le modèle ne doit avoir aucune règle métier à deviner.**
 
-1. Identifier les trois agrégats, leurs responsabilités et leurs invariants.
-2. Définir les entités, les types, les contraintes et les ports nécessaires.
-3. Décrire les transactions métier avec des contrats explicites.
-4. Vérifier que chaque transaction peut être implémentée à partir de son code et du contexte directement accessible.
-5. Tester les cas nominaux et les refus métier.
+## Travail demandé
 
-Le professeur pourra sélectionner une transaction et demander directement à un modèle d'IA de l'implémenter. **Les ambiguïtés du contrat font partie de l'évaluation.**
+1. Identifier les entités et leurs responsabilités.
+2. Définir les types, les ports et les règles métier nécessaires.
+3. Déclarer trois use cases avec des contrats explicites.
+4. Prévoir les cas nominaux, les cas limites et les refus métier.
+5. Vérifier que chaque use case peut être implémenté en se fondant sur son contrat et les définitions du projet.
 
-## Contrat attendu pour chaque transaction
+La forme des contraintes et des abstractions métier est **laissée à votre appréciation**. Créez les outils qui rendent les règles explicites plutôt que de les laisser implicites.
 
-La définition d'une transaction doit permettre de déterminer sans deviner :
+## Contrat attendu pour chaque use case
 
-- Ses entrées et leur signification.
-- Les conditions nécessaires à son exécution.
-- Les règles métier à appliquer, y compris leurs limites exactes.
-- Les modifications d'état et les effets attendus.
-- Les sorties et les différents cas d'échec.
-- Les dépendances nécessaires, définies par des ports.
+Le modèle d'IA doit pouvoir déterminer sans interprétation :
+
+- Les entrées, leur signification et leurs types.
+- Les préconditions et les règles métier exactes.
+- Les lectures, modifications d'état et effets attendus.
+- Les dépendances utilisées à travers des ports.
+- Les valeurs de retour et les erreurs possibles.
 - Le comportement attendu dans les cas limites.
 
-Les règles doivent se trouver dans les types, les signatures et les commentaires proches de la transaction : **un agent ne doit pas devoir inventer ce qui manque**.
+Exprimez autant que possible ces informations dans les types, les signatures et les commentaires proches du code concerné.
+
+**L'ambiguïté d'une règle ou d'un comportement fait partie de l'évaluation.**
 
 ## Structure de départ
 
-- `src/domains/constraints/` : contraintes métier.
-- `src/domains/entities/` : entités du domaine.
+- `src/domains/entities/` : entités métier.
 - `src/domains/repositories/` : ports de persistance.
-- `src/domains/useCase/` : emplacement provisoire des points d'entrée métier.
-- `src/infrastructure/` : serveur Express et adaptateurs techniques.
+- `src/domains/useCase/` : points d'entrée du métier.
+- `src/infrastructure/` : serveur Express et implémentations techniques.
 
-Le domaine métier précis, ses trois agrégats et les transactions à concevoir seront ajoutés ici après choix du sujet.
+Vous pouvez ajouter les fichiers et dossiers nécessaires à votre conception.
 
-## Lancer le projet
+Le sujet métier précis et les trois use cases seront indiqués ici après validation du sujet.
+
+## Démarrage
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Le serveur Express expose `GET /health`. La commande `pnpm typecheck` vérifie les types.
+Le serveur Express expose `GET /health`. Utilisez `pnpm typecheck` pour vérifier le typage.
