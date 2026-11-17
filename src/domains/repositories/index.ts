@@ -1,0 +1,1 @@
+export type { MemberRepository } from "./memberRepository"
