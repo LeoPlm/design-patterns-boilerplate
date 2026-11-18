@@ -82,7 +82,7 @@ Exprimez ces informations autant que possible dans les types, les signatures et 
 
 - `src/domains/entities/` : entités métier.
 - `src/domains/repositories/` : ports de persistance.
-- `src/domains/useCase/` : points d'entrée métier.
+- `src/do-ins/useCase/` : points d'entrée métier.
 - `src/infrastructure/` : serveur Express et implémentations techniques.
 
 Vous pouvez ajouter les fichiers et dossiers nécessaires à votre conception.
@@ -95,3 +95,5 @@ pnpm dev
 ```
 
 Le serveur Express expose `GET /health`. Utilisez `pnpm typecheck` pour vérifier le typage.
+
+

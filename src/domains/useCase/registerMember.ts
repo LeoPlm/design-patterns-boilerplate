@@ -24,6 +24,8 @@ export type RegisterMemberDependancies = {
 /** @returns l'adhérent créé en cas de succès, sinon la raison du refus. */
 export type RegisterMemberUseCase = (input : RegisterMemberInput) => Promise<Result<Member, RegisterMemberError>>
 
+export type RegisterMemberFactory = (dependencies : RegisterMemberDependancies) => RegisterMemberUseCase
+
 /**
  * Situation 1 : inscrire un nouvel adhérent.
  *
@@ -42,8 +44,6 @@ export type RegisterMemberUseCase = (input : RegisterMemberInput) => Promise<Res
  * - En cas de refus, ni `save` ni `memberIdGenerator.next` ne sont appelés.
  * - Le use case ne lève pas d'exception pour un refus métier.
  */
-export type RegisterMemberFactory = (dependencies : RegisterMemberDependancies) => RegisterMemberUseCase
-
 // Stub pour donner un point d'entré à l'IA
 export const createRegisterMember: RegisterMemberFactory = (_dependencies) => {
   return async (_input) => {

@@ -1,2 +1,5 @@
 export type { Email, Member, MemberId} from "./member"
 export { parseName, parseEmail } from "./member"
+export type { BookCopy, BookCopyId, BookCopyStatus } from "./bookCopy"
+export type { Loan, LoanId } from "./loan"
+export { LOAN_DURATION_DAYS, MAX_ACTIVE_LOANS, isLoanLimitReached, computeDueDate } from "./loan"

@@ -1,4 +1,4 @@
-import type { Email, Member } from "../entities/member"
+import type { Email, Member, MemberId } from "../entities/member"
 
 /** Port de persistance des adhérents. */
 export type MemberRepository = {
@@ -14,5 +14,7 @@ export type MemberRepository = {
    * c'est au use case de les avoir faites avant l'appel.
    */
   save(member : Member): Promise<void>
+
+  findById(id : MemberId): Promise<Member | undefined>
 
 }
