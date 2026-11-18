@@ -1,4 +1,4 @@
-import type { BookCopyId, Loan, MemberId } from "../entities"
+import type { ActiveLoan, BookCopyId, Loan, MemberId } from "../entities"
 
 /** Port de persistance des emprunts. */
 export type LoanRepository = {
@@ -13,11 +13,11 @@ export type LoanRepository = {
    * ou `undefined` s'il n'y en a pas. Ne lève pas d'erreur.
    * Un exemplaire a au plus un emprunt en cours.
    */
-  findActiveByCopyId(copyId : BookCopyId): Promise<Loan | undefined>
+  findActiveByCopyId(copyId : BookCopyId): Promise<ActiveLoan | undefined>
 
   /**
-   * Enregistre l'emprunt. S'il existe déjà un emprunt de même `id`, il est mis à jour
-   * avec les valeurs reçues. Aucune vérification métier.
+   * Enregistre l'emprunt (en cours ou clôturé). S'il existe déjà un emprunt de même `id`,
+   * il est mis à jour avec les valeurs reçues. Aucune vérification métier.
    */
   save(loan : Loan): Promise<void>
 }

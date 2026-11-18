@@ -14,3 +14,12 @@ export type BookCopy = {
   readonly status : BookCopyStatus
 }
 
+/**
+ * Valide un identifiant d'exemplaire reçu de l'extérieur (ex. une requête HTTP).
+ * Ne vérifie que la forme : l'existence se vérifie avec `bookCopyRepository.findById`.
+ * @returns l'identifiant sans espaces autour, ou `undefined` s'il est vide.
+ */
+export function parseBookCopyId(str : string): BookCopyId | undefined {
+  const trimmed = str.trim()
+  return trimmed === "" ? undefined : trimmed as BookCopyId
+}

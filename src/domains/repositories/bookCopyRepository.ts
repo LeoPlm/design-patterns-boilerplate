@@ -1,6 +1,9 @@
 import type { BookCopy, BookCopyId } from "../entities"
 
-/** Port de persistance des exemplaires. */
+/**
+ * Port de persistance des exemplaires.
+ * Aucun use case ne crée d'exemplaire : ils existent avant, fournis par le jeu de données initial.
+ */
 export type BookCopyRepository = {
   /** @returns l'exemplaire, ou `undefined` s'il n'existe pas. Ne lève pas d'erreur. */
   findById(id : BookCopyId): Promise<BookCopy | undefined>

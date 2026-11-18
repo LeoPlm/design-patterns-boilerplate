@@ -22,7 +22,17 @@ export function parseName(str : string): string | undefined {
   return trimmed === "" ? undefined : trimmed
 }
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+/**
+ * Valide un numéro d'adhérent reçu de l'extérieur (ex. une requête HTTP).
+ * Ne vérifie que la forme : l'existence se vérifie avec `memberRepository.findById`.
+ * @returns le numéro sans espaces autour, ou `undefined` s'il est vide.
+ */
+export function parseMemberId(str : string): MemberId | undefined {
+  const trimmed = str.trim()
+  return trimmed === "" ? undefined : trimmed as MemberId
+}
+
+const EMAIL_PATTERN =/^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 /**
  * Valide et normalise une adresse email (trim, puis minuscules).

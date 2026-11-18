@@ -1,7 +1,8 @@
-import type { BookCopyId, Loan } from "../entities"
+import type { BookCopyId, ClosedLoan } from "../entities"
+import { computeLateDays } from "../entities"
 import type { BookCopyRepository, LoanRepository } from "../repositories"
 import type { Clock } from "../ports/clock"
-import type { Result } from "../shared/result"
+import { success, failure, type Result } from "../shared/result"
 
 export type ReturnBookInput = {
   readonly copyId : BookCopyId
@@ -19,8 +20,8 @@ export type ReturnBookDependencies = {
   readonly clock : Clock
 }
 
-/** @returns l'emprunt clôturé (avec `returnedAt` et `lateDays`) en cas de succès. */
-export type ReturnBookUseCase = (input : ReturnBookInput) => Promise<Result<Loan, ReturnBookError>>
+/** @returns l'emprunt clôturé (`ClosedLoan`, avec `returnedAt` et `lateDays`) en cas de succès. */
+export type ReturnBookUseCase = (input : ReturnBookInput) => Promise<Result<ClosedLoan, ReturnBookError>>
 
 export type ReturnBookFactory = (dependencies : ReturnBookDependencies) => ReturnBookUseCase
 
@@ -32,7 +33,7 @@ export type ReturnBookFactory = (dependencies : ReturnBookDependencies) => Retur
  * 2. `bookCopyRepository.findById(copyId)`       -> absent : COPY_NOT_FOUND
  * 3. `returnedAt = clock.now()` (appelé UNE seule fois)
  * 4. `lateDays = computeLateDays(loan.dueDate, returnedAt)`
- * 5. Créer l'emprunt clôturé : `{ ...loan, returnedAt, lateDays }`
+ * 5. Créer le `ClosedLoan` : `{ ...loan, returnedAt, lateDays }`
  * 6. `loanRepository.save(closedLoan)`
  * 7. `bookCopyRepository.save({ ...copy, status: "AVAILABLE" })`
  * 8. Retourner `success(closedLoan)`
@@ -45,9 +46,30 @@ export type ReturnBookFactory = (dependencies : ReturnBookDependencies) => Retur
  * Garanties :
  * - En cas de refus, aucun `save` n'est appelé et `clock.now` non plus.
  * - Le use case ne lève pas d'exception pour un refus métier.
+ * - Les erreurs techniques (une promesse rejetée par un port) ne sont ni interceptées
+ *   ni transformées en `failure` : elles remontent telles quelles à l'appelant.
  */
-export const createReturnBook: ReturnBookFactory = (_dependencies) => {
-  return async (_input) => {
-    throw new Error("Not implemented")
+export const createReturnBook: ReturnBookFactory = ({ loanRepository, bookCopyRepository, clock }) => {
+  return async (input) => {
+    const loan = await loanRepository.findActiveByCopyId(input.copyId)
+    if (loan === undefined) {
+      return failure({ code: "NO_ACTIVE_LOAN", copyId: input.copyId })
+    }
+
+    const copy = await bookCopyRepository.findById(input.copyId)
+    if (copy === undefined) {
+      return failure({ code: "COPY_NOT_FOUND", copyId: input.copyId })
+    }
+
+    const returnedAt = clock.now()
+    const closedLoan: ClosedLoan = {
+      ...loan,
+      returnedAt,
+      lateDays: computeLateDays(loan.dueDate, returnedAt),
+    }
+
+    await loanRepository.save(closedLoan)
+    await bookCopyRepository.save({ ...copy, status: "AVAILABLE" })
+    return success(closedLoan)
   }
 }

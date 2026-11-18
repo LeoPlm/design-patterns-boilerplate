@@ -1,4 +1,4 @@
-import type { Email, Member } from "../entities/member"
+import { parseEmail, parseName, type Email, type Member } from "../entities/member"
 import type { MemberRepository } from "../repositories"
 import type { MemberIdGenerator } from "../ports/memberIdGenerator"
 import { success, failure, type Result } from "../shared/result"
@@ -43,9 +43,39 @@ export type RegisterMemberFactory = (dependencies : RegisterMemberDependencies) 
  * Garanties :
  * - En cas de refus, ni `save` ni `memberIdGenerator.next` ne sont appelés.
  * - Le use case ne lève pas d'exception pour un refus métier.
+ * - Les erreurs techniques (une promesse rejetée par un port) ne sont ni interceptées
+ *   ni transformées en `failure` : elles remontent telles quelles à l'appelant.
  */
-export const createRegisterMember: RegisterMemberFactory = (_dependencies) => {
-  return async (_input) => {
-    throw new Error("Not implemented")
+export const createRegisterMember: RegisterMemberFactory = ({ memberRepository, memberIdGenerator }) => {
+  return async (input) => {
+    const lastName = parseName(input.lastName)
+    if (lastName === undefined) {
+      return failure({ code: "INVALID_INPUT", field: "lastName" })
+    }
+
+    const firstName = parseName(input.firstName)
+    if (firstName === undefined) {
+      return failure({ code: "INVALID_INPUT", field: "firstName" })
+    }
+
+    const email = parseEmail(input.email)
+    if (email === undefined) {
+      return failure({ code: "INVALID_INPUT", field: "email" })
+    }
+
+    const existing = await memberRepository.findByEmail(email)
+    if (existing !== undefined) {
+      return failure({ code: "EMAIL_ALREADY_REGISTERED", email })
+    }
+
+    const member: Member = {
+      id: memberIdGenerator.next(),
+      email,
+      lastName,
+      firstName,
+    }
+
+    await memberRepository.save(member)
+    return success(member)
   }
 }

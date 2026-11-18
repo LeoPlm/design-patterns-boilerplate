@@ -2,22 +2,32 @@ import type { Brand } from "../shared/brand"
 import type { MemberId } from "./member"
 import type { BookCopyId } from "./bookCopy"
 
+/** Identifiant d'emprunt. Fourni par `LoanIdGenerator`, jamais modifié. */
 export type LoanId = Brand<string, "LoanId">
 
-/**
- * Un emprunt est "en cours" tant que `returnedAt` vaut `undefined`.
- * Au retour : `returnedAt` est renseigné ET `lateDays` est un nombre (0 si rendu à temps).
- * Tant que l'emprunt est en cours, `lateDays` vaut `undefined`.
- */
-export type Loan = {
+/** Données communes à tous les emprunts. */
+type LoanBase = {
   readonly id : LoanId,
   readonly memberId : MemberId,
   readonly copyId : BookCopyId,
   readonly borrowedAt : Date,
-  readonly dueDate : Date,
-  readonly returnedAt : Date | undefined,
-  readonly lateDays : number | undefined
+  readonly dueDate : Date
 }
+
+/** Emprunt EN COURS : l'exemplaire n'a pas encore été rapporté. */
+export type ActiveLoan = LoanBase & {
+  readonly returnedAt : undefined,
+  readonly lateDays : undefined
+}
+
+/** Emprunt CLÔTURÉ : `lateDays` vaut 0 si l'exemplaire est rendu à temps ou en avance. */
+export type ClosedLoan = LoanBase & {
+  readonly returnedAt : Date,
+  readonly lateDays : number
+}
+
+/** Un emprunt est en cours tant que `returnedAt` vaut `undefined`. */
+export type Loan = ActiveLoan | ClosedLoan
 
 /** Durée d'un emprunt, en jours. */
 export const LOAN_DURATION_DAYS = 14
