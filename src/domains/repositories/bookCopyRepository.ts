@@ -1,4 +1,4 @@
-import type { BookCopy, BookCopyId, BookCopyStatus } from "../entities";
+import type { BookCopy, BookCopyId } from "../entities"
 
 /** Port de persistance des exemplaires. */
 export type BookCopyRepository = {

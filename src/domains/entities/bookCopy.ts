@@ -7,7 +7,7 @@ export type BookCopyId = Brand<string, "BookCopyId">
  * AVAILABLE : peut être emprunté.
  * BORROWED  : couvert par exactement un emprunt en cours.
  */
-export type BookCopyStatus = "AVALAIBLE" | "BORROWED"
+export type BookCopyStatus = "AVAILABLE" | "BORROWED"
 
 export type BookCopy = {
   readonly id : BookCopyId,

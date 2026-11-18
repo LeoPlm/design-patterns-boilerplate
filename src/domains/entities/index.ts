@@ -1,4 +1,4 @@
-export type { Email, Member, MemberId} from "./member"
+export type { Email, Member, MemberId } from "./member"
 export { parseName, parseEmail } from "./member"
 export type { BookCopy, BookCopyId, BookCopyStatus } from "./bookCopy"
 export type { Loan, LoanId } from "./loan"

@@ -1,5 +1,5 @@
 import type { Brand } from "../shared/brand"
-import type { MemberId } from "../entities/member"
+import type { MemberId } from "./member"
 import type { BookCopyId } from "./bookCopy"
 
 export type LoanId = Brand<string, "LoanId">
@@ -52,6 +52,6 @@ function startOfUtcDay(date : Date): number {
  * @returns le nombre de jours de retard (entier >= 0), 0 si rendu à temps ou en avance.
  */
 export function computeLateDays(dueDate : Date, returnedAt : Date): number {
-  const days = Math.round((startOfUtcDay(returnedAt) - startOfUtcDay(dueDate)))
+  const days = Math.round((startOfUtcDay(returnedAt) - startOfUtcDay(dueDate)) / MS_PER_DAY)
   return Math.max(0, days)
 }

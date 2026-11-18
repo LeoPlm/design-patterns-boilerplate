@@ -1,14 +1,16 @@
-import type { BookCopyId, Loan } from "../entities";
-import type { BookCopyRepository, LoanRepository } from "../repositories";
-import type { Clock } from "../ports/clocks";
-import type { Result } from "../shared/result";
+import type { BookCopyId, Loan } from "../entities"
+import type { BookCopyRepository, LoanRepository } from "../repositories"
+import type { Clock } from "../ports/clock"
+import type { Result } from "../shared/result"
 
 export type ReturnBookInput = {
   readonly copyId : BookCopyId
 }
 
 export type ReturnBookError =
+  /** Aucun emprunt en cours pour cet exemplaire (inclut : exemplaire inconnu, ou déjà rendu). */
   | { readonly code : "NO_ACTIVE_LOAN", readonly copyId : BookCopyId }
+  /** Incohérence de données : un emprunt en cours existe mais l'exemplaire est introuvable. */
   | { readonly code : "COPY_NOT_FOUND", readonly copyId : BookCopyId }
 
 export type ReturnBookDependencies = {

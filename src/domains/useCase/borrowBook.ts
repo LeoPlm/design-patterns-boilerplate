@@ -1,6 +1,6 @@
 import type { BookCopyId, Loan, MemberId } from "../entities"
 import type { BookCopyRepository, LoanRepository, MemberRepository } from "../repositories"
-import type { Clock } from "../ports/clocks"
+import type { Clock } from "../ports/clock"
 import type { LoanIdGenerator } from "../ports/loanIdGenerator"
 import type { Result } from "../shared/result"
 
@@ -10,12 +10,16 @@ export type BorrowBookInput = {
 }
 
 export type BorrowBookError =
+  /** Aucun adhérent avec ce numéro. */
   | { readonly code : "MEMBER_NOT_FOUND", readonly memberId : MemberId }
+  /** Aucun exemplaire avec cet identifiant. */
   | { readonly code : "COPY_NOT_FOUND", readonly copyId : BookCopyId }
+  /** L'adhérent a déjà MAX_ACTIVE_LOANS emprunts en cours. */
   | { readonly code : "LOAN_LIMIT_REACHED", readonly memberId : MemberId }
-  | { readonly code : "COPY_NOT_AVAILABLE", copyId : BookCopyId }
+  /** L'exemplaire existe mais son statut est "BORROWED". */
+  | { readonly code : "COPY_NOT_AVAILABLE", readonly copyId : BookCopyId }
 
-export type BorrowBookDependancies = {
+export type BorrowBookDependencies = {
   readonly memberRepository : MemberRepository,
   readonly bookCopyRepository : BookCopyRepository,
   readonly loanRepository : LoanRepository,
@@ -26,7 +30,7 @@ export type BorrowBookDependancies = {
 /** @returns l'emprunt créé en cas de succès, sinon la raison du refus. */
 export type BorrowBookUseCase = (input : BorrowBookInput) => Promise<Result<Loan, BorrowBookError>>
 
-export type BorrowBookFactory = (dependancies : BorrowBookDependancies) => BorrowBookUseCase
+export type BorrowBookFactory = (dependencies : BorrowBookDependencies) => BorrowBookUseCase
 
 /**
  * Situation 2 : un adhérent emprunte un exemplaire.
@@ -49,7 +53,6 @@ export type BorrowBookFactory = (dependancies : BorrowBookDependancies) => Borro
  * - En cas de refus, aucun `save` n'est appelé, et ni `clock.now` ni `loanIdGenerator.next`.
  * - Le use case ne lève pas d'exception pour un refus métier.
  */
-// Stub
 export const createBorrowBook: BorrowBookFactory = (_dependencies) => {
   return async (_input) => {
     throw new Error("Not implemented")

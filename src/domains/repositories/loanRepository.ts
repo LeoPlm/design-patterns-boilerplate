@@ -8,13 +8,13 @@ export type LoanRepository = {
    */
   countActiveByMemberId(memberId : MemberId): Promise<number>
 
-    /**
+  /**
    * @returns l'emprunt EN COURS (`returnedAt === undefined`) de cet exemplaire,
    * ou `undefined` s'il n'y en a pas. Ne lève pas d'erreur.
    * Un exemplaire a au plus un emprunt en cours.
    */
-  findActiveByCopyId(copyId : BookCopyId): Promise<Loan | undefined> 
-  
+  findActiveByCopyId(copyId : BookCopyId): Promise<Loan | undefined>
+
   /**
    * Enregistre l'emprunt. S'il existe déjà un emprunt de même `id`, il est mis à jour
    * avec les valeurs reçues. Aucune vérification métier.
