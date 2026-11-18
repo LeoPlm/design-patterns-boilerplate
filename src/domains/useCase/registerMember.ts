@@ -16,7 +16,7 @@ export type RegisterMemberError =
   /** Un adhérent possède déjà cet email (après normalisation). */
   | { readonly code: "EMAIL_ALREADY_REGISTERED"; readonly email: Email }
 
-export type RegisterMemberDependancies = {
+export type RegisterMemberDependencies = {
   readonly memberRepository: MemberRepository
   readonly memberIdGenerator: MemberIdGenerator
 }
@@ -24,7 +24,7 @@ export type RegisterMemberDependancies = {
 /** @returns l'adhérent créé en cas de succès, sinon la raison du refus. */
 export type RegisterMemberUseCase = (input : RegisterMemberInput) => Promise<Result<Member, RegisterMemberError>>
 
-export type RegisterMemberFactory = (dependencies : RegisterMemberDependancies) => RegisterMemberUseCase
+export type RegisterMemberFactory = (dependencies : RegisterMemberDependencies) => RegisterMemberUseCase
 
 /**
  * Situation 1 : inscrire un nouvel adhérent.
@@ -44,7 +44,6 @@ export type RegisterMemberFactory = (dependencies : RegisterMemberDependancies) 
  * - En cas de refus, ni `save` ni `memberIdGenerator.next` ne sont appelés.
  * - Le use case ne lève pas d'exception pour un refus métier.
  */
-// Stub pour donner un point d'entré à l'IA
 export const createRegisterMember: RegisterMemberFactory = (_dependencies) => {
   return async (_input) => {
     throw new Error("Not implemented")

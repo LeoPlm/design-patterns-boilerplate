@@ -6,7 +6,8 @@ export type LoanId = Brand<string, "LoanId">
 
 /**
  * Un emprunt est "en cours" tant que `returnedAt` vaut `undefined`.
- * `lateDays` n'est renseigné qu'au retour (voir situation 3).
+ * Au retour : `returnedAt` est renseigné ET `lateDays` est un nombre (0 si rendu à temps).
+ * Tant que l'emprunt est en cours, `lateDays` vaut `undefined`.
  */
 export type Loan = {
   readonly id : LoanId,
@@ -37,4 +38,20 @@ export function computeDueDate(borrowedAt : Date): Date {
   const due = new Date(borrowedAt.getTime())
   due.setUTCDate(due.getUTCDate() + LOAN_DURATION_DAYS)
   return due
+}
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+function startOfUtcDay(date : Date): number {
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+}
+
+/**
+ * Compare les JOURS calendaires (UTC), pas les heures :
+ * rendu le jour de `dueDate`, à n'importe quelle heure -> 0.
+ * @returns le nombre de jours de retard (entier >= 0), 0 si rendu à temps ou en avance.
+ */
+export function computeLateDays(dueDate : Date, returnedAt : Date): number {
+  const days = Math.round((startOfUtcDay(returnedAt) - startOfUtcDay(dueDate)))
+  return Math.max(0, days)
 }
